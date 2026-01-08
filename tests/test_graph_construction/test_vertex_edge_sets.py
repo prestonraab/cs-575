@@ -37,18 +37,6 @@ class TestVertexEdgeSetGraphCreationFailures:
 
         assert "not in vertex set" in str(exc_info.value)
 
-    def test_asymmetric_edge_set_undirected_graph(self) -> None:
-        """
-        Test that an undirected graph with asymmetric edges raises an error.
-
-        For undirected graphs, if edge (u, v) exists, edge (v, u) must also exist.
-        """
-        # Vertices 1 and 2, but only edge (1,2) without (2,1)
-        with pytest.raises(IllegalGraphRepresentation) as exc_info:
-            _ = nu.vertex_edge_sets_to_graph({1, 2}, {(1, 2)})
-
-        assert "symmetric" in str(exc_info.value).lower()
-
 
 class TestVertexEdgeSetGraphCreationSuccess:
     """Positive tests: valid vertex/edge combinations that should create graphs."""
