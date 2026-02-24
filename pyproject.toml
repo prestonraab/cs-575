@@ -2,6 +2,12 @@
 requires = ["setuptools>=69.5.1"]
 build-backend = "setuptools.build_meta"
 
+[tool.setuptools]
+py-modules = ["network_utilities", "plotting_utilities", "SIR_model"]
+
+[tool.setuptools.package-dir]
+"" = "src"
+
 [project]
 name = "class-exercises"
 description = "A collection of Jupyter notebooks and exercises for use in CS 575"

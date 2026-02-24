@@ -11,13 +11,12 @@ def test_homework_problem_7() -> None:
 
     # when
     ### FIX THIS ADJACENCY LIST
-    adjacency_list: dict[int, set[int]] = {1: {2},
-                                           2: {3},
-                                           3: {4},
-                                           4: {5},
-                                           5: {1},
-                                           6: {5},
-                                           7: {6}}
+    adjacency_list: dict[int, set[int]] = {1: {2,4,6},
+                                           2: {1,4,3},
+                                           3: {2,4,5},
+                                           4: {1,2,3,5,6},
+                                           5: {3,4,6},
+                                           6: {5,4,1}}
     G = adjacency_list_to_graph(adjacency_list)
     degree_list: list[int] = [y for (_,y) in G.degree]
 

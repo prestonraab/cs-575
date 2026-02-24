@@ -14,7 +14,7 @@ def test_hw4_problem_1() -> None:
     ## Modify these values
     m = 1       # Probability of meeting
     p = 0.4     # Transmission rate
-    gamma = 0.1 # Recovery rate
+    gamma = 0.02 # Recovery rate
     N = 1000
     s0 = N-1
     i0 = 1
@@ -32,6 +32,10 @@ def test_hw4_problem_1() -> None:
     my_simulation.run_simulation()
     # Then
     infectious_history = my_simulation.I
+    print(max(infectious_history))
     assert N >= minimum_population_size
     assert infectious_history[0] < 2
     assert max(infectious_history) > peak_number_infectious
+
+if __name__ == "__main__":
+    test_hw4_problem_1()
