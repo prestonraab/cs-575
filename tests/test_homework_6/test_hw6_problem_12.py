@@ -1,6 +1,7 @@
 from network_utilities import adjacency_list_to_digraph
 import networkx as nx
-import numpy as np 
+import numpy as np
+import plotting_utilities as pu
 
 def test_homework_problem_katz_vs_pagerank() -> None:
     """
@@ -11,11 +12,20 @@ def test_homework_problem_katz_vs_pagerank() -> None:
 
     # Create graph (STUDENT IMPLEMENTS THIS)
     adjacency_list: dict[int, set[int]] = {
-        # Example structure students must design
-        # 1: {...},
-        # ...
+        1: {5,},
+        2: {5},
+        3: {5},
+        4: {5},
+        5: {6, 7},
+        6: {},
+        7: {},
+        8: {5}
     }
     G = adjacency_list_to_digraph(adjacency_list)
+
+    nx.nx_pydot.graphviz_layout(G, prog="neato")
+    pu.show_digraph(G)
+
 
     # Basic structural checks
     assert isinstance(G, nx.DiGraph)
@@ -23,6 +33,7 @@ def test_homework_problem_katz_vs_pagerank() -> None:
 
     # Compute centralities
     katz = nx.katz_centrality_numpy(G, alpha=0.1, beta=1.0)
+    print(katz)
     pagerank = nx.pagerank(G, alpha=0.85)
 
     katz_vals = np.array(list(katz.values()))
@@ -39,3 +50,7 @@ def test_homework_problem_katz_vs_pagerank() -> None:
     max_pr = np.max(pr_vals)
     min_pr = np.min(pr_vals)
     assert max_pr > 2 * min_pr
+
+
+if __name__ == "__main__":
+    test_homework_problem_katz_vs_pagerank()
