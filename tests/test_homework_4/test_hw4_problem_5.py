@@ -34,8 +34,15 @@ def test_hw4_problem5() -> None:
     my_simulation.run_simulation()
     # Then
     infectious_history = my_simulation.I
-    assert N >= minimum_population_size
-    assert max(infectious_history) <= 0.1 * N 
     susceptible_history = my_simulation.S
     recovered_history = my_simulation.R
+    print(f"max infectious: {max(infectious_history)}")
+    print(f"Never infectious: {susceptible_history[-1]}")
+    print(f"Recovered at end: {recovered_history[-1]}")
+    assert N >= minimum_population_size
+    assert max(infectious_history) <= 0.1*N
+    assert susceptible_history[-1] >= 0.4*N
     assert recovered_history[-1] >= 0.4*N
+
+if __name__ == "__main__":
+    test_hw4_problem5()
