@@ -68,7 +68,7 @@ def show_graph_with_eigenvector_centrality(G: nx.Graph, eigenvectors: NDArray) -
 
 
 def show_digraph(
-    G: nx.DiGraph, title: str = "My directed graph", layout: str = "spring"
+    G: nx.DiGraph, title: str = "My directed graph", layout: str = "spring", node_labels: dict | None = None
 ) -> None:
     if layout not in ["spring", "circular", "random", "shell", "spectral", "neato"]:
         raise ValueError(
@@ -102,7 +102,7 @@ def show_digraph(
         node_size=300,
         alpha=0.8,
     )
-    nx.draw_networkx_labels(G, node_positions, font_size=15)
+    nx.draw_networkx_labels(G, node_positions, labels=node_labels, font_size=15)
     nx.draw_networkx_edges(
         G,
         node_positions,
