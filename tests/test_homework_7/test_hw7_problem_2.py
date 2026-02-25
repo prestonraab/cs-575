@@ -8,14 +8,17 @@ def test_hw7_problem_2() -> None:
     Graph must have >= 5 vertices, >= 2 edges, and partition must have >= 2 sets.
     """
 
-    # Build graph
-    G: nx.Graph = nx.Graph()
-    # TODO: Add vertices
-
-    # TODO: Add edges
-
-    # TODO: Define partition
-    partition: Tuple[Set[Hashable], ...] = ()
+    clique_size = 3
+    num_communities = 100
+    cliques = [nx.complete_graph(clique_size) for _ in range(num_communities)]
+    
+    # Combine them into a single disconnected graph
+    G: nx.Graph = nx.disjoint_union_all(cliques)
+    
+    partition = [
+        set(range(i * clique_size, (i + 1) * clique_size)) 
+        for i in range(num_communities)
+    ]
 
     # Basic structural checks
     assert isinstance(G, nx.Graph)
@@ -32,3 +35,7 @@ def test_hw7_problem_2() -> None:
     # Modularity check
     q = nx.community.modularity(G, partition)
     assert q >= 0.95    # Q >= 0.95
+
+if __name__ == "__main__":
+    test_hw7_problem_2()
+    print("Tests pass!")

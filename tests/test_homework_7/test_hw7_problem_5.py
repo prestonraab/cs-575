@@ -1,5 +1,6 @@
 import networkx as nx
 from networkx import edge_betweenness_centrality as betweenness
+from network_utilities import adjacency_list_to_graph
 
 
 def test_hw7_problem_5() -> None:
@@ -9,10 +10,15 @@ def test_hw7_problem_5() -> None:
     """
 
     # Build graph
-    G: nx.Graph = nx.Graph()
-    # TODO: Add vertices
-
-    # TODO: Add edges
+    adjacency_list: dict[int, set[int]] = {
+        0: {1,4,5},
+        1: {0,2},
+        2: {1,3},
+        3: {2},
+        4: {0,5},
+        5: {0,4},
+    }
+    G: nx.Graph = adjacency_list_to_graph(adjacency_list)
 
     # Validate required edges exist
     required_edges = [(0, 1), (2, 3), (4, 5)]

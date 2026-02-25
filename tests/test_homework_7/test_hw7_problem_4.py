@@ -9,13 +9,9 @@ def test_hw7_problem_4() -> None:
     """
 
     # Build graph
-    G: nx.Graph = nx.Graph()
-    # TODO: Add vertices
+    G: nx.Graph = nx.barbell_graph(50, 3)
 
-    # TODO: Add edges
-
-    # TODO: Define partition
-    partition: Tuple[Set[Hashable], ...] = ()
+    partition = (set(range(50)), set(range(50, 53)), set(range(53, 103)))
 
     # Validate structure
     assert isinstance(G, nx.Graph)
