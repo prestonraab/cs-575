@@ -1,6 +1,7 @@
 import networkx as nx
 from typing import Tuple, Hashable, Set
 from network_utilities import adjacency_list_to_graph
+from utils import *
 
 
 def test_hw7_problem_3() -> None:
@@ -34,6 +35,9 @@ def test_hw7_problem_3() -> None:
     union = set().union(*partition)
     assert union == set(G.nodes())
     assert sum(len(group) for group in partition) == len(union)
+
+    show_partitions(G, partition)
+    plt.savefig("problem_3_partition.png")
 
     # Check modularity
     q = nx.community.modularity(G, partition)

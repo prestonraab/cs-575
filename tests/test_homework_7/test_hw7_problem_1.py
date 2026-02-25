@@ -1,6 +1,7 @@
 import networkx as nx
 from typing import Tuple, Hashable, Set
 from network_utilities import adjacency_list_to_graph
+from utils import *
 
 
 def test_hw7_problem_1() -> None:
@@ -41,8 +42,7 @@ def test_hw7_problem_1() -> None:
     assert abs(q - 0.0) < 0.01  # Q ≈ 0
 
     
-    import matplotlib.pyplot as plt
-    nx.draw_kamada_kawai(G, with_labels=True)
+    show_partitions(G, partition)
     plt.savefig("problem_1_partition.png")
 
 if __name__ == "__main__":

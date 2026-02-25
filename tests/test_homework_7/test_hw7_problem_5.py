@@ -1,6 +1,7 @@
 import networkx as nx
 from networkx import edge_betweenness_centrality as betweenness
 from network_utilities import adjacency_list_to_graph
+from utils import *
 
 
 def test_hw7_problem_5() -> None:
@@ -36,3 +37,10 @@ def test_hw7_problem_5() -> None:
 
     # Check ordering: highest to lowest in the given order
     assert scores[0] > scores[1] > scores[2]
+
+    show_graph_with_edge_scores(G)
+    plt.savefig("problem_5_partition.png")
+
+
+
+

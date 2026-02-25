@@ -1,5 +1,6 @@
 import networkx as nx
 from typing import Tuple, Hashable, Set
+from utils import *
 
 
 def test_hw7_problem_2() -> None:
@@ -35,6 +36,9 @@ def test_hw7_problem_2() -> None:
     # Modularity check
     q = nx.community.modularity(G, partition)
     assert q >= 0.95    # Q >= 0.95
+
+    show_partitions(G, partition)
+    plt.savefig("problem_2_partition.png")
 
 if __name__ == "__main__":
     test_hw7_problem_2()
