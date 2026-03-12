@@ -8,6 +8,7 @@ from scipy.sparse import csr_matrix, diags
 from copy import deepcopy
 from typing import Callable as function
 from sklearn.cluster import KMeans
+from sklearn.preprocessing import normalize
 
 
 
@@ -332,20 +333,17 @@ def get_shores_from_eigenvector_median(G: nx.Graph,
 ## Spectral Clustering  ##
 ##########################
 
-def get_k_leading_eigenvectors_sparse(A: csr_matrix, k: int) -> NDArray[np.float32]:
+def get_k_principal_eigenvectors_sparse(A: csr_matrix, k: int) -> NDArray[np.float32]:
     """
-    Computes the eigenvectors corresponding to the largest k eigenvalues 
-    of a given sparse matrix.
-        - The "LM" parameter of eigsh indicates "largest algebraic" 
-          which pulls out the eigenvalues with largest value (not
-          largest absolute value) 
-        - Use the "LA" parameter of eigsh if you want the "largest algebraic" 
-          which pulls out the eigenvalues with largest value (not
-          largest absolute value) 
-    This code was written using information from Copilot and ChatGPT
+        Computes the eigenvectors corresponding to the k eigenvalues with
+        largest modulus (largest absolute value) of a sparse symmetric matrix.
+
+        Returns eigenvectors ordered from largest to smallest eigenvalue
+        modulus so column 0 corresponds to the dominant eigenvalue by modulus.
     """
-    _, eigenvectors = eigsh(A, k=k, which="LM")
-    return np.asarray(eigenvectors, dtype=np.float32)
+    eigenvalues, eigenvectors = eigsh(A, k=k, which="LM")
+    order = np.lexsort((-np.real(eigenvalues), -np.abs(eigenvalues)))
+    return np.asarray(eigenvectors[:, order], dtype=np.float32)
 
 def get_k_fiedler_eigenvectors_sparse(L: csr_matrix, k: int) -> NDArray[np.float32]:
     """
@@ -368,16 +366,69 @@ def get_k_fiedler_eigenvectors_sparse(L: csr_matrix, k: int) -> NDArray[np.float
     _, eigenvectors = eigsh(L, k=k+1, which="SM")  # Compute two smallest eigenvalues: "SM" means "smallest magnitude"
     return np.asarray(eigenvectors[:, 1:k+1], dtype=np.float32)  # Return the second smallest eigenvector
 
+def get_partition_from_single_eigenvector(
+    eigenvector: NDArray[np.float32],
+    nodes: list[Hashable] | None = None,
+    method: str = "median",
+    num_clusters: int = 2,
+) -> list[set[Hashable]]:
+    """Create node clusters from a single eigenvector.
+
+    Methods:
+    - "sign": split by value >= 0 vs < 0
+    - "median": split by value >= median vs < median
+    - "kmeans": 1D k-means on eigenvector values
+    """
+    values: NDArray[np.float32] = np.asarray(eigenvector, dtype=np.float32).reshape(-1)
+    node_list: list[Hashable] = list(range(len(values))) if nodes is None else nodes
+
+    if len(node_list) != len(values):
+        raise ValueError("Length of nodes must equal length of eigenvector")
+
+    if method == "sign":
+        return [
+            {node_list[i] for i, v in enumerate(values) if v >= 0},
+            {node_list[i] for i, v in enumerate(values) if v < 0},
+        ]
+
+    if method == "median":
+        threshold = float(np.median(values))
+        return [
+            {node_list[i] for i, v in enumerate(values) if v >= threshold},
+            {node_list[i] for i, v in enumerate(values) if v < threshold},
+        ]
+
+    if method == "kmeans":
+        if num_clusters < 2:
+            raise ValueError("num_clusters must be at least 2 for method='kmeans'")
+        X = values.reshape(-1, 1)
+        kmeans = KMeans(
+            init="k-means++",
+            n_clusters=num_clusters,
+            n_init=50,
+            max_iter=500,
+            algorithm="lloyd",
+            random_state=1234,
+        )
+        labels = kmeans.fit_predict(X)
+        return [{node_list[i] for i, lbl in enumerate(labels) if lbl == c} for c in range(num_clusters)]
+
+    raise ValueError("method must be one of: 'sign', 'median', 'kmeans'")
+
 def get_clusters(embedding: NDArray[np.float32], 
                  num_clusters: int = 4
                  ) -> KMeans:
+    # Normalize rows so clustering uses direction in spectral embedding space.
+    X = normalize(embedding, norm="l2", axis=1)
     kmeans = KMeans(
-        init="random",
+        init="k-means++",
         n_clusters=num_clusters,
-        n_init=10,
+        n_init=50,
+        max_iter=500,
+        algorithm="lloyd",
         random_state=1234
         )
-    kmeans.fit(embedding)
+    kmeans.fit(X)
     return kmeans
 
 def get_colors_from_clusters(embedding: NDArray[np.float32], 
@@ -386,5 +437,5 @@ def get_colors_from_clusters(embedding: NDArray[np.float32],
     kmeans = get_clusters(embedding, num_clusters=num_clusters)
     labels = kmeans.labels_
     color_template = ['y', 'c', 'm', 'k', 'red', 'green', 'lightblue']
-    color: list[str] = [color_template[x] for x in list(labels) ]
+    color: list[str] = [color_template[x % len(color_template)] for x in list(labels)]
     return color

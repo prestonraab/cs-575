@@ -50,7 +50,8 @@ def count_edges_cut(G: nx.Graph,
 
 def show_graph(G: nx.Graph,
                     pos: dict[Hashable, Tuple[float, float]] | None = None,
-                    title: str = ""
+                    title: str = "",
+                    show_node_labels: bool = True
                     ) -> None:
     """ 
         Show the networkx graph 
@@ -60,14 +61,21 @@ def show_graph(G: nx.Graph,
         #pos = nx.spring_layout(G, seed = 0)
         #pos = nx.nx_pydot.pydot_layout(G, prog = "neato")
         pos = nx.nx_pydot.graphviz_layout(G, prog = "neato")
-    nx.draw(G, pos, node_color = 'lightblue', alpha=0.8, with_labels=True)
+    nx.draw(
+        G,
+        pos,
+        node_color='lightblue',
+        alpha=0.8,
+        with_labels=show_node_labels,
+    )
     plt.title(title)
     plt.axis('off')
 
 def show_partitions(G: nx.Graph,
                     partition: Tuple[Set[Hashable], ...], 
                     pos: dict[Hashable, Tuple[float, float]] | None = None,
-                    title: str = ""
+                    title: str = "",
+                    show_node_labels: bool = True
                     ) -> None:
     """ 
         Show the networkx graph with colors and edges indicating properties
@@ -94,7 +102,8 @@ def show_partitions(G: nx.Graph,
         nx.draw_networkx_nodes(partition[i],pos,node_color=color_list[i%len(color_list)], alpha = 0.8)
     for edge in G.edges:
         draw_edge_by_type(G, pos, edge, partition)
-    nx.draw_networkx_labels(G,pos)
+    if show_node_labels:
+        nx.draw_networkx_labels(G, pos)
     if len(G.edges) == 0:
         mod = 0
     else:
