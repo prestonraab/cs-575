@@ -99,7 +99,8 @@ Keep releases small and frequent so students can pull cleanly; resolve conflicts
 .
 ├── src/
 │   ├── network_utilities.py
-│   └── plotting_utilities.py
+│   ├── plotting_utilities.py
+│   └── plotting_utilities_for_movie_database.py
 ├── tests/
 │   └── test_graph_construction/
 │       ├── test_vertex_edge_sets.py
@@ -115,6 +116,7 @@ Keep releases small and frequent so students can pull cleanly; resolve conflicts
 ```
 - `src/network_utilities.py`: graph creation and validation utilities.
 - `src/plotting_utilities.py`: graph plotting helpers (show_* functions).
+- `src/plotting_utilities_for_movie_database.py`: plotting helpers used by the movie knowledge graph notebook.
 - `notebooks`: Jupyter notebooks for demos and assignments.
 - `tests/test_graph_construction/`: pytest-based tests for graph construction utilities.
 - `data`: tracked folder with `.gitkeep`; contents are ignored by Git.
